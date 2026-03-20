@@ -10,7 +10,7 @@
     
     <style>
         :root {
-            --bg-page: #f8fafc; /* Nền trang web hơi xám nhẹ để làm nổi bật khung app */
+            --bg-page: #f8fafc;
             --bg-app: #ffffff;
             --grid-color: #e2e8f0;
             --border-color: #cbd5e1;
@@ -33,28 +33,23 @@
             color: var(--card-text-dark);
             background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 20px 20px;
-            padding: 2rem 1rem;
+            /* Đổi padding body để không bị đè bởi header nếu dùng fixed */
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* 1. KHUNG BAO QUANH TẤT CẢ NỘI DUNG */
         .app-container {
             width: 100%;
             max-width: 500px;
-            background-color: var(--bg-app);
-            border: 2px solid var(--border-color);
-            border-radius: 24px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            padding: 1rem; /* Padding cho container */
         }
 
-        /* 2. KHUNG CỦA HEADER */
+        /* --- PHẦN FIX HEADER --- */
         .app-header {
             display: flex;
             justify-content: space-between;
@@ -62,7 +57,13 @@
             padding: 1rem 1.2rem;
             border: 2px solid var(--border-color);
             border-radius: 16px;
-            background-color: #f8fafc; /* Màu nền hơi khác chút để phân biệt */
+            background-color: #f8fafc;
+            
+            /* Thuộc tính quan trọng để cố định */
+            position: sticky;
+            top: 1rem; /* Cách mép trên 1 khoảng bằng padding */
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Thêm bóng đổ để nổi bật khi cuộn */
         }
 
         .header-title {
@@ -98,37 +99,16 @@
             justify-content: center;
         }
 
-        .btn-head:hover {
-            color: var(--orange);
-        }
-
-        .btn-head.primary {
-            color: var(--orange);
-            font-size: 1.6rem;
-        }
-
-        .btn-head:active {
-            transform: scale(0.85);
-        }
+        .btn-head:hover { color: var(--orange); }
+        .btn-head.primary { color: var(--orange); font-size: 1.6rem; }
+        .btn-head:active { transform: scale(0.85); }
 
         /* Danh sách thẻ */
         .counters-list {
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
-            /* Đảm bảo danh sách không bị tràn ra ngoài nếu quá dài (có thể thêm cuộn nếu muốn) */
-            max-height: 77vh; 
-            overflow-y: auto;
-            padding-right: 5px; /* Để chừa chỗ cho thanh cuộn */
-        }
-
-        /* Tùy chỉnh thanh cuộn cho đẹp */
-        .counters-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .counters-list::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1;
-            border-radius: 10px;
+            padding-bottom: 2rem; /* Tạo khoảng trống cuối trang */
         }
 
         .counter-card {
@@ -139,7 +119,6 @@
             align-items: center;
             transition: transform 0.15s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            /* Tránh thẻ bị co nhỏ khi có thanh cuộn */
             flex-shrink: 0; 
         }
 
@@ -162,10 +141,7 @@
             transition: opacity 0.2s, transform 0.1s;
         }
 
-        .btn-action:hover, .btn-action:active {
-            opacity: 1;
-            transform: scale(1.1);
-        }
+        .btn-action:hover, .btn-action:active { opacity: 1; transform: scale(1.1); }
 
         .card-title {
             text-transform: uppercase;
@@ -209,17 +185,13 @@
             user-select: none;
         }
 
-        .btn-ctrl:active {
-            opacity: 1;
-            transform: scale(1.15);
-        }
+        .btn-ctrl:active { opacity: 1; transform: scale(1.15); }
 
-        /* Bảng màu thẻ */
         .card-0 { background-color: #0a7f9a; color: var(--card-text-light); } 
         .card-1 { background-color: #fdbd5e; color: var(--card-text-dark); } 
         .card-2 { background-color: #ea9fcf; color: var(--card-text-dark); } 
 
-        /* MODAL LỊCH SỬ (Giữ nguyên) */
+        /* MODAL */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -251,121 +223,17 @@
             align-items: center;
         }
 
-        .modal-header h2 {
-            font-size: 1.2rem;
-            color: var(--card-text-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0;
-        }
-
-        .modal-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-clear-history {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--danger);
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-        }
-
-        .btn-clear-history:hover {
-            opacity: 1;
-        }
-
-        .btn-clear-history:active {
-            transform: scale(0.9);
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .btn-close:hover {
-            color: var(--card-text-dark);
-        }
-
-        .modal-body {
-            padding: 1rem 1.5rem;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-
-        .history-item {
-            border-bottom: 1px dashed #eee;
-            padding: 12px 0;
-        }
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .hist-date {
-            font-size: 0.85rem;
-            color: #888;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .hist-detail {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--card-text-dark);
-            line-height: 1.4;
-        }
-        
-        .hist-detail span {
-            color: var(--orange);
-            font-weight: 700;
-        }
-
-        .empty-history {
-            text-align: center;
-            color: #aaa;
-            padding: 3rem 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .empty-history i {
-            font-size: 2.5rem;
-            color: #ddd;
-        }
-
-        .empty-state-main {
-            text-align: center;
-            color: #8d99ae;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .empty-state-main i {
-            font-size: 3.5rem;
-            color: #cbd5e1;
-        }
+        .modal-header h2 { font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px;}
+        .modal-actions { display: flex; align-items: center; gap: 15px; }
+        .btn-clear-history { background: none; border: none; font-size: 1.2rem; color: var(--danger); cursor: pointer; opacity: 0.8; display: flex; align-items: center; }
+        .btn-close { background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; display: flex; align-items: center; }
+        .modal-body { padding: 1rem 1.5rem; overflow-y: auto; flex-grow: 1; }
+        .history-item { border-bottom: 1px dashed #eee; padding: 12px 0; }
+        .hist-date { font-size: 0.85rem; color: #888; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .hist-detail { font-size: 1rem; font-weight: 500; color: var(--card-text-dark); line-height: 1.4; }
+        .hist-detail span { color: var(--orange); font-weight: 700; }
+        .empty-history, .empty-state-main { text-align: center; color: #8d99ae; padding: 2rem 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .empty-history i, .empty-state-main i { font-size: 3rem; color: #cbd5e1; }
 
     </style>
 </head>
@@ -375,7 +243,7 @@
         
         <div class="app-header">
             <div class="header-title">
-                <i class="bi bi-trophy-fill"></i> Count Pro
+                <i class="bi bi-trophy-fill"></i> Bộ đếm
             </div>
             <div class="header-actions">
                 <button class="btn-head" onclick="openHistory()" title="Xem lịch sử">
@@ -407,8 +275,7 @@
                     </button>
                 </div>
             </div>
-            <div class="modal-body" id="historyList">
-                </div>
+            <div class="modal-body" id="historyList"></div>
         </div>
     </div>
 
@@ -419,17 +286,9 @@
         let counters = JSON.parse(localStorage.getItem(DATA_KEY)) || [];
         let historyLogs = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
 
-        function saveToStorage() {
-            localStorage.setItem(DATA_KEY, JSON.stringify(counters));
-        }
-
-        function saveHistoryToStorage() {
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(historyLogs));
-        }
-
-        function generateId() {
-            return Math.random().toString(36).substr(2, 9);
-        }
+        function saveToStorage() { localStorage.setItem(DATA_KEY, JSON.stringify(counters)); }
+        function saveHistoryToStorage() { localStorage.setItem(HISTORY_KEY, JSON.stringify(historyLogs)); }
+        function generateId() { return Math.random().toString(36).substr(2, 9); }
 
         function getCurrentDateTime() {
             const now = new Date();
@@ -468,29 +327,19 @@
         }
 
         function addHistoryLog(message) {
-            historyLogs.unshift({
-                id: generateId(),
-                datetime: getCurrentDateTime(),
-                content: message
-            });
+            historyLogs.unshift({ id: generateId(), datetime: getCurrentDateTime(), content: message });
             if (historyLogs.length > 100) historyLogs.pop();
             saveHistoryToStorage();
         }
 
         function resetAllCounters() {
             if (counters.length === 0) return;
-            
             const activeCounters = counters.filter(c => c.value > 0);
-            
-            if (activeCounters.length === 0) {
-                alert("Tất cả bộ đếm đã ở mức 0!");
-                return;
-            }
+            if (activeCounters.length === 0) { alert("Tất cả bộ đếm đã ở mức 0!"); return; }
 
             if (confirm('Bạn muốn reset TẤT CẢ bộ đếm về 0?')) {
                 let logDetails = activeCounters.map(c => `${c.name} (${c.value})`).join(', ');
                 addHistoryLog(`Đã reset: <span>${logDetails}</span>`);
-
                 counters.forEach(c => c.value = 0);
                 saveToStorage();
                 renderUI();
@@ -498,12 +347,8 @@
         }
 
         function clearAllHistory() {
-            if (historyLogs.length === 0) {
-                alert("Lịch sử hiện đang trống!");
-                return;
-            }
-
-            if (confirm('Bạn có chắc chắn muốn xóa TOÀN BỘ lịch sử reset không? Hành động này không thể hoàn tác.')) {
+            if (historyLogs.length === 0) return;
+            if (confirm('Xóa TOÀN BỘ lịch sử?')) {
                 historyLogs = [];
                 saveHistoryToStorage();
                 openHistory();
@@ -515,40 +360,24 @@
         function renderUI() {
             const appContainer = document.getElementById('app');
             appContainer.innerHTML = '';
-
             if (counters.length === 0) {
-                appContainer.innerHTML = `
-                    <div class="empty-state-main">
-                        <i class="bi bi-inbox"></i>
-                        <p>Chưa có dữ liệu</p>
-                    </div>
-                `;
+                appContainer.innerHTML = `<div class="empty-state-main"><i class="bi bi-inbox"></i><p>Chưa có dữ liệu</p></div>`;
                 return;
             }
-
             counters.forEach((counter, index) => {
                 const colorClass = cardColors[index % cardColors.length];
                 const card = document.createElement('div');
                 card.className = `counter-card ${colorClass}`;
-                
                 card.innerHTML = `
                     <div class="card-header-actions">
                         <div class="card-title">${counter.name}</div>
-                        <button class="btn-action" onclick="deleteCounter('${counter.id}')" title="Xóa bộ đếm">
-                            <i class="bi bi-trash3-fill"></i>
-                        </button>
+                        <button class="btn-action" onclick="deleteCounter('${counter.id}')"><i class="bi bi-trash3-fill"></i></button>
                     </div>
-                    
                     <div class="card-main">
-                        <button class="btn-ctrl" onclick="updateValue('${counter.id}', -1)">
-                            <i class="bi bi-dash"></i>
-                        </button>
+                        <button class="btn-ctrl" onclick="updateValue('${counter.id}', -1)"><i class="bi bi-dash"></i></button>
                         <div class="count-display" id="count-${counter.id}">${counter.value}</div>
-                        <button class="btn-ctrl" onclick="updateValue('${counter.id}', 1)">
-                            <i class="bi bi-plus"></i>
-                        </button>
-                    </div>
-                `;
+                        <button class="btn-ctrl" onclick="updateValue('${counter.id}', 1)"><i class="bi bi-plus"></i></button>
+                    </div>`;
                 appContainer.appendChild(card);
             });
         }
@@ -556,40 +385,22 @@
         function openHistory() {
             const modal = document.getElementById('historyModal');
             const listContainer = document.getElementById('historyList');
-            
             listContainer.innerHTML = ''; 
-            
             if (historyLogs.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="empty-history">
-                        <i class="bi bi-clock-history"></i>
-                        <span>Chưa có lịch sử reset nào.</span>
-                    </div>`;
+                listContainer.innerHTML = `<div class="empty-history"><i class="bi bi-clock-history"></i><span>Trống</span></div>`;
             } else {
                 historyLogs.forEach(log => {
                     const item = document.createElement('div');
                     item.className = 'history-item';
-                    item.innerHTML = `
-                        <div class="hist-date"><i class="bi bi-calendar-event"></i> ${log.datetime}</div>
-                        <div class="hist-detail">${log.content}</div>
-                    `;
+                    item.innerHTML = `<div class="hist-date"><i class="bi bi-calendar-event"></i> ${log.datetime}</div><div class="hist-detail">${log.content}</div>`;
                     listContainer.appendChild(item);
                 });
             }
-            
             modal.style.display = 'flex';
         }
 
-        function closeHistory() {
-            document.getElementById('historyModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('historyModal');
-            if (event.target == modal) {
-                closeHistory();
-            }
-        }
+        function closeHistory() { document.getElementById('historyModal').style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == document.getElementById('historyModal')) closeHistory(); }
 
         renderUI();
     </script>
